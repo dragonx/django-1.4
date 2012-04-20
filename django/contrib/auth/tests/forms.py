@@ -4,11 +4,12 @@ from django.contrib.auth.models import User
 from django.contrib.auth.forms import (UserCreationForm, AuthenticationForm,
     PasswordChangeForm, SetPasswordForm, UserChangeForm, PasswordResetForm)
 from django.core import mail
+from django.db import connection
 from django.forms.fields import Field, EmailField
 from django.test import TestCase
 from django.test.utils import override_settings
 from django.utils.encoding import force_unicode
-from django.utils import translation
+from django.utils import translation, unittest
 
 
 class UserCreationFormTest(TestCase):
@@ -212,6 +213,7 @@ class UserChangeFormTest(TestCase):
 
     fixtures = ['authtestdata.json']
 
+    @unittest.skipIf(not connection.features.supports_joins, 'Requires JOIN support')
     def test_username_validity(self):
         user = User.objects.get(username='testclient')
         data = {'username': 'not valid'}
