@@ -12,6 +12,8 @@ from django.core.serializers.python import Deserializer as PythonDeserializer
 from django.utils import simplejson
 from django.utils.timezone import is_aware
 
+from google.appengine.api.datastore_types import Key
+
 class Serializer(PythonSerializer):
     """
     Convert a queryset to JSON.
@@ -70,6 +72,8 @@ class DjangoJSONEncoder(simplejson.JSONEncoder):
                 r = r[:12]
             return r
         elif isinstance(o, decimal.Decimal):
+            return str(o)
+        elif isinstance(o, Key):
             return str(o)
         else:
             return super(DjangoJSONEncoder, self).default(o)
