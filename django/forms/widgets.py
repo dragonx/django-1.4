@@ -27,7 +27,7 @@ __all__ = (
     'SplitDateTimeWidget',
 )
 
-MEDIA_TYPES = ('css','js')
+MEDIA_TYPES = ('css','js', 'notjs')
 
 class Media(StrAndUnicode):
     def __init__(self, media=None, **kwargs):
@@ -38,6 +38,7 @@ class Media(StrAndUnicode):
 
         self._css = {}
         self._js = []
+        self._notjs = []
 
         for name in MEDIA_TYPES:
             getattr(self, 'add_' + name)(media_attrs.get(name, None))
@@ -54,6 +55,9 @@ class Media(StrAndUnicode):
 
     def render_js(self):
         return [u'<script type="text/javascript" src="%s"></script>' % self.absolute_path(path) for path in self._js]
+
+    def render_notjs(self):
+        return [u'<script type="notjs" src="%s"></script>' % self.absolute_path(path) for path in self._notjs]
 
     def render_css(self):
         # To keep rendering order consistent, we can't just iterate over items().
@@ -87,6 +91,12 @@ class Media(StrAndUnicode):
             for path in data:
                 if path not in self._js:
                     self._js.append(path)
+
+    def add_notjs(self, data):
+        if data:
+            for path in data:
+                if path not in self._notjs:
+                    self._notjs.append(path)
 
     def add_css(self, data):
         if data:
@@ -126,6 +136,7 @@ def media_property(cls):
                 return Media(definition)
         else:
             return base
+
     return property(_media)
 
 class MediaDefiningClass(type):
