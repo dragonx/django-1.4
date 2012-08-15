@@ -57,7 +57,7 @@ class Media(StrAndUnicode):
         return [u'<script type="text/javascript" src="%s"></script>' % self.absolute_path(path) for path in self._js]
 
     def render_notjs(self):
-        return [u'<script type="notjs" src="%s"></script>' % self.absolute_path(path) for path in self._notjs]
+        return [u'<script type="notjs" data-src="%s"></script>' % self.absolute_path(path) for path in self._notjs]
 
     def render_css(self):
         # To keep rendering order consistent, we can't just iterate over items().
